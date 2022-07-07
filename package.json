@@ -1,0 +1,23 @@
+{
+  "name": "airtable_test",
+  "version": "1.0.0",
+  "description": "Cypress Test",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run --browser chrome",
+    "test-headed": "cypress run --browser chrome --headed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HuckleberryCarignan/airtable_test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HuckleberryCarignan/airtable_test/issues"
+  },
+  "homepage": "https://github.com/HuckleberryCarignan/airtable_test#readme",
+  "devDependencies": {
+    "cypress": "^10.3.0"
+  }
+}
