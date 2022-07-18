@@ -7,9 +7,6 @@ const freeSignUpModuleTitleText = "Create your free account";
 const freeSignUpEmailSetUpTextEntryId = "[id=emailSignup]";
 const freeSignUpContinueButton = "Continue";
 
-const ff = `type="submit"`;
-// General
-
 // Test Data
 const user1 = {};
 user1.emailaddress = `${randomGenerator(10)}@${randomGenerator(4)}.com`;
