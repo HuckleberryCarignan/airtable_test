@@ -14,7 +14,35 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import "./commands";
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+Cypress.on("uncaught:exception", (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  return false;
+});
+
+
+function getQuestionnaireText() {
+  let foo = "aWalker";
+  cy.get("body").then(($body) => {
+    if ($body.find('[class="questionnaireHeader"]').length > 0) {
+      foo = JSON.stringify($body.find('[class="questionnaireHeader"]').text());
+      return foo;
+    }
+  });
+}
+
+Cypress.Commands.add("getQuestionnaireText", getQuestionnaireText);
+
+function checkForOnBoadringQuestion(textToFind) {
+  cy.get("body").then(($body) => {
+    if ($body.find('[class="questionnaireHeader"]').length > 0) {
+      if ($body.find('[class="questionnaireHeader"]').text() === textToFind) {
+        console.log("foo");
+        return true;
+      } else return false;
+    }
+  });
+}
+
+Cypress.Commands.add("checkForOnBoadringQuestion", checkForOnBoadringQuestion);

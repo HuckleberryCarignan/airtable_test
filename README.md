@@ -11,9 +11,20 @@ $ npm run test-headed
 
 
 
-This task was not completed due to the following flaws in the assignment:
-1.  Can't run headless - got pop-up asking for a click and hold.  Tried, but couldn't figure out how to go on.  See /airtable_test/taskIssues/headless.png  I eventually just chose to uses the headed run approach.
-2. On boarding process not consistent - modal pop-up questions during new free user process not always present.  Questions like "How did you first hear about Airtable?", not always present.  I tried to use conditional actiosn/verification, but couldn't get it to failthfully work.   Tried using jquery to look for elements before accessing them, but found cypress not very helpful.
-3. Login sometimes asked for email verifcation, other times just for password - see /airtable_test/taskIssues/additionalLogin.png.  I needed an additinal conditional.
+Automation Task:  Complete (sort of)
+ 
+There are still a few main issues that make this task very difficult.
+ 
+1. CORS (Cross-Origin Resource Sharing) - I had major issues when dealing with logging in with the newly created user
+2. Site Stability - Almost periodically, when creating a new Base, I would get a pop-up mentioning an error (please see the /airtable_test/taskIssues/siteNotStable.png)
+3. Airtable WebSecurity - Tester needs to be white listed.  I would occasionally get the pop-up that I could not automate around (please see /airtable_test/taskIssues/SiteSecurityNotHelpful.png)
+4. Automation Logic Hackery - The last bit of verification, I didn’t look at all the users, but knew that there were only two with that base and one had to have the user email I was looking for and the permissions.
+ 
+All in all, of the 2 automation tasks:
+1. Create a new account through the sign up flow
+2. Sign into an existing account, create a new base, invite a new user as an Editor
+The first is incredibly stable (not too shabby if I do say myself), the second has stability issues due to the above.
 
-At this point I figured, either we'll get together and chat about what I did or you'll just pass on me as a candidate.
+Improvments:
+- Extract several of the Jquery gets into a seperate file - broken down by page model methodology.
+

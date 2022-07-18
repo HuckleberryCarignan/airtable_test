@@ -11,11 +11,16 @@ const ff = `type="submit"`;
 // General
 
 // Test Data
-let user = {};
-user.emailaddress = `${randomGenerator(10)}@${randomGenerator(4)}.com`;
-user.firstname = `${randomGenerator(10)}`;
-user.lastname = `${randomGenerator(10)}`;
-user.password = `${randomGenerator(10)}`;
+const user1 = {};
+user1.emailaddress = `${randomGenerator(10)}@${randomGenerator(4)}.com`;
+user1.firstname = `${randomGenerator(10)}`;
+user1.lastname = `${randomGenerator(10)}`;
+user1.password = `${randomGenerator(10)}`;
+const user2 = {};
+user2.emailaddress = `${randomGenerator(10)}@${randomGenerator(4)}.com`;
+user2.firstname = `${randomGenerator(10)}`;
+user2.lastname = `${randomGenerator(10)}`;
+user2.password = `${randomGenerator(10)}`;
 
 // supporting function
 function randomGenerator(length) {
@@ -38,7 +43,7 @@ export function clickIfExist(element) {
 }
 
 describe("Airtable test", () => {
-  beforeEach(() => {
+  before(() => {
     cy.visit(airtableURL);
     cy.get("[class=Brand-module_srOnly__Wk_6R]").should(
       "have.text",
@@ -60,93 +65,57 @@ describe("Airtable test", () => {
     //   cy.contains('Press and hold button').trigger('mouseleave');
     //   cy.wait(10000);
     // }
-    
+
     // If headed (not headless) goes fine
 
     // Enter email
     cy.contains(freeSignUpModuleTitleText);
-    cy.get(freeSignUpEmailSetUpTextEntryId).type(user.emailaddress);
+    cy.get(freeSignUpEmailSetUpTextEntryId).type(user1.emailaddress);
     cy.contains(freeSignUpContinueButton).click();
 
     // Enter Username Password
     // Always present
     cy.contains(freeSignUpModuleTitleText);
     cy.contains("Full Name");
-    cy.get("[id=fullName]").type(`${user.firstname} ${user.lastname}`);
-    cy.get("[id=password]").type(`${user.password}`);
+    cy.get("[id=fullName]").type(`${user1.firstname} ${user1.lastname}`);
+    cy.get("[id=password]").type(`${user1.password}`);
     cy.contains(freeSignUpContinueButton).click();
 
     // Choose Teams
-    // Always present
-    cy.contains(`Let's get you set up. Which team are you on?`);
-    cy.contains(`Marketing`).click();
-    cy.contains(freeSignUpContinueButton).click();
-    cy.wait(5000);
+    cy.get('[class^="questionnaireHeader"]').then((elem) => {
+      if (elem.text() === `Let's get you set up. Which team are you on?`) {
+        cy.contains(`Let's get you set up. Which team are you on?`);
+        cy.contains(`Marketing`).click();
+        cy.contains(freeSignUpContinueButton).click();
+      }
+    });
 
-    // Questions: How did you first hear about Airtable?
-    // This section of the Questions sometimes is there and is sometimes not
-    //    Check if is there before proceeding with verifcation
-    if (Cypress.$('[class*=".questionnaireHeader"]').length > 0) {
-      cy.get('[class*=".questionnaireHeader"]').then(($headerText) => {
-        // assert on the text
-        if (
-          $headerText
-            .text()
-            .includes("How did you first hear about Airtable?")
-        ) {
-          cy.task("log", "***********************************");
-          cy.task("log", "Text exists");
-          cy.task("log", "***********************************");
-          cy.contains(`How did you first hear about Airtable?`);
-          cy.contains("Social media").click();
-          cy.contains(freeSignUpContinueButton).click();
-        } else {
-          cy.task("log", "***********************************");
-          cy.task("log", `The Question 'How did you first hear about Airtable?' does not exist`
-          );
-          cy.task("log", "***********************************");
-        }
-      });
-    } else {
-      cy.task("log", "***********************************");
-      cy.task("log", `Element not there`);
-      cy.task("log", "***********************************");
-    }
-    cy.wait(5000);
+    // Question: How did you first hear about Airtable?
+    cy.questionExists(`@questionExistsValue`).then((questionExistAnswer) => {
+      if (questionExistAnswer) {
+        cy.questionGetText(`@questionText`).then((questionText) => {
+          if (questionText === `How did you first hear about Airtable?`) {
+            cy.contains(`How did you first hear about Airtable?`);
+            cy.contains("Social media").click();
+            cy.contains(freeSignUpContinueButton).click();
+          }
+        });
+      }
+    });
 
-    // Questions: Who do you collaborate with?
-    // This section of the Questions sometimes is there and is sometimes not
-    //    Check if is there before proceeding with verifcation
-    if (Cypress.$('[class*=".questionnaireHeader"]').length > 0) {
-      cy.get('[class*=".questionnaireHeader"]').then(($headerText) => {
+    // Question: Who do you collaborate with?
+    cy.questionExists(`@questionExistsValue`).then((questionExistAnswer) => {
+      if (questionExistAnswer) {
+        cy.questionGetText(`@questionText`).then((questionText) => {
+          if (questionText === `Who do you collaborate with?`) {
+            cy.contains(`Who do you collaborate with?`);
+            cy.contains(`Skip`).click();
+          }
+        });
+      }
+    });
 
-        if (
-          $headerText
-            .text()
-            .includes("Who do you collaborate with?")
-        ) {
-          cy.task("log", "***********************************");
-          cy.task("log", "Text exists");
-          cy.task("log", "***********************************");
-          cy.contains(`Who do you collaborate with?`);
-          cy.contains(`Skip`).click();
-          cy.wait(10000);
-      
-        } else {
-          cy.task("log", "***********************************");
-          cy.task("log", `The Question 'Who do you collaborate with?' does not exist`
-          );
-          cy.task("log", "***********************************");
-        }
-      });
-    } else {
-      cy.task("log", "***********************************");
-      cy.task("log", `Element not there`);
-      cy.task("log", "***********************************");
-    }
-
-    cy.wait(10000);
-    // Questions: Get up and running fast!
+    // Question:  Get up and running fast!
     cy.contains(`Get up and running fast!`);
     cy.contains(`Skip`).click();
 
@@ -156,40 +125,66 @@ describe("Airtable test", () => {
 
     // Verify User login in
     cy.get('[aria-label="Account"]').click();
-    cy.contains(user.emailaddress);
+    cy.contains(user1.emailaddress);
 
     // Log out
-    cy.contains('Log out').click();
+    cy.contains("Log out").click();
     cy.get("[class=Brand-module_srOnly__Wk_6R]").should(
       "have.text",
       "Airtable home or view your bases"
     );
   });
 
-
   it("Sign in as user", () => {
-
     // Sign in with the user that was just made
-    // NOTE:  Sometimes the password entry does not show
-    cy.contains('Sign in').click();
-    cy.get("[id=emailLogin]").type('foo1@bar1.com');
-    cy.get("[id=passwordLogin]").type(`MoxieSince1884`);
-    cy.get('button').contains('Sign in').click();
+    cy.contains("Sign in").click();
+    cy.get("[id=emailLogin]").type(user1.emailaddress);
+
+    // Question: Deal with Google email issue and enter password
+    cy.loginPasswordEntryExist(`@loginPasswordEntryExistAnswer`).then(
+      (loginPasswordEntryExistAnswer) => {
+        if (!loginPasswordEntryExistAnswer) {
+          // If the Password entry does not exist, then we need to deal with the annoying google Continue button
+          cy.contains(`Continue`).click();
+        }
+        // Enter Password and continue
+        cy.get("[id=passwordLogin]").type(user1.password);
+        cy.get("button").contains("Sign in").click();
+      }
+    );
+    // cy.atHomeScreen(`@atHomeScreenAnswer`).then(
+    //   (atHomeScreenAnswer) =>
+    //   {
+    //     if (!atHomeScreenAnswer) {
+    //       cy.task("log", "***********************************");
+    //       cy.task("log", `Now What?`);
+    //       cy.task("log", "***********************************");
+    //       cy.wait(300000);
+    //     }
+  
+    //   })
 
     // Create a new base
-    cy.contains('Start from scratch').click();
-    cy.contains('Skip').click();
-
+    cy.contains("Start from scratch").click();
+    cy.contains("Skip").click();
 
     // Share the base
-    cy.contains('Share').click();
-    // I've put too much time into this at this point.  There are some serious flaws in this exercise.  Please se read me.
-    cy.wait(20000);
+    cy.get('button').contains('Share').click();
+    cy.get('input').invoke('attr', 'placeholder').should('contain', `Invite by email...`).type(user2.emailaddress);
 
+    // Set new invte to Editor role
+    cy.get("[class*='selectMenuButton'][role='button']").click();
+    cy.get("[class='small quiet']").contains(`Can edit records and views, but cannot configure tables or fields`).click();
 
+    // Send invite
+    cy.contains("Invite").click();
+
+    // Close dialog box
+    cy.get("[role='dialog'] [aria-label='Close dialog']").click();
+
+    // Invite by email...
+    cy.get("[role='listitem'] [class*='flex-inline pill pointer']").click();
+    cy.contains(user2.emailaddress);
+    cy.contains('Editor');
   });
-
-
-
-
 });
